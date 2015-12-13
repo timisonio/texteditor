@@ -1,19 +1,22 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <list>
+#include "Line.h"
 using namespace std;
 
 int main() {
-  string str1; // Left of cursor
-  string str2; // Right of cursor
+  list<Line> file_contents;
+  file_contents.push_back(Line());
+  auto current_Line = file_contents.front();
   string input = "";
 
   while (input != "e") {
     // Print current string
-    cout << str1 << str2 << endl;
+    cout << current_Line.get_contents() << endl;
 
     // Print cursor
-    for (int i = 0; i < str1.length(); i++)
+    for (int i = 0; i < current_Line.get_cursor_position(); i++)
       cout << ' ';
     cout << '^' << endl;
 
@@ -30,37 +33,30 @@ int main() {
     switch (input[0]) {
     case 'i':
       if (input.length() > 1)
-	str1 += input.substr(2, string::npos);
+	current_Line.insert(input.substr(2, string::npos));
       break;
     case 'd':
-      if (str1.length() > 0)
-	str1.pop_back();
+      current_Line.pop_back();
       break;
 
     // movement
     case 'h':
-      if (str1.length() > 0) {
-	str2 = str1[str1.length() - 1] + str2;
-	str1.pop_back();
-      }
+      current_Line.left();
       break;
     case 'l':
-      if (str2.length() > 0) {
-	str1 += str2[0];
-	str2.erase(0, 1);
-      }
+      current_Line.right();
       break;
 
     //save/open
-    case 's':
-      if (input.length() > 1)
-      {
-	ofstream savefile;
-	savefile.open(input.substr(2, string::npos));
-	savefile << str1 << str2;
-	savefile.close();
-      }
-      break;
+    // case 's':
+    //   if (input.length() > 1)
+    //   {
+    // 	ofstream savefile;
+    // 	savefile.open(input.substr(2, string::npos));
+    // 	savefile << str1 << str2;
+    // 	savefile.close();
+    //   }
+    //   break;
 
     default:
       continue;
