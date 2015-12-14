@@ -26,3 +26,9 @@
 *.exe
 *.out
 *.app
+
+# Emacs
+*.cpp~
+*.h~
+.cpp\#
+.h\#
