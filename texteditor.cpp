@@ -2,8 +2,9 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include "Line.h"
 #include <cctype>
+#include <iomanip>
+#include "Line.h"
 
 void clear_screen() {
 #ifdef WIN32
@@ -12,6 +13,10 @@ void clear_screen() {
   // Assume POSIX
   std::system ("clear");
 #endif
+}
+
+int int_length(int number) {
+	return std::to_string(number).length();
 }
 
 int main() {
@@ -24,17 +29,25 @@ int main() {
   while (input != "e") {
     clear_screen();
     Line& current_Line = file_contents.at(current_Line_index);
+		unsigned int number_lines = file_contents.size();
 
     // Print file contents
     for (unsigned int i = 0; i < file_contents.size(); i++) {
+			int length_of_index = int_length(number_lines);
       if (i != current_Line_index){
-        std::cout << i << file_contents.at(i).get_contents() << std::endl;
+				// pad index to stay right justified
+				std::cout << std::setfill(' ') << std::setw(length_of_index) << i << ' ';
+        std::cout << file_contents.at(i).get_contents() << std::endl;
       }
       else {
         // Print current string
-        std::cout << '>' << file_contents.at(i).get_contents() << std::endl;
+				std::cout << std::setfill(' ') <<
+					std::setw(length_of_index) << ">" << ' ';
+				std::cout << file_contents.at(i).get_contents() << std::endl;
         // Print cursor
-        for (int j = 0; j <= file_contents.at(i).get_cursor_position(); j++)
+				int spaces_to_print = file_contents.at(i).get_cursor_position() +
+					length_of_index;
+        for (int j = 0; j < spaces_to_print; j++)
           std::cout << ' ';
         std::cout << '^' << std::endl;
       }
@@ -61,7 +74,7 @@ int main() {
           current_Line.pop_back();
         }
         else {
-          if (file_contents.size() > 1) {
+          if (number_lines > 1) {
             file_contents.erase(file_contents.begin() + current_Line_index);
             current_Line_index--;
           }
@@ -97,7 +110,7 @@ int main() {
           break;
         case 'j':
           for (int i = 0; i < spaces; i++)
-            if (current_Line_index < file_contents.size() - 1)
+            if (current_Line_index < number_lines - 1)
               current_Line_index++;
           break;
         case 'k':
